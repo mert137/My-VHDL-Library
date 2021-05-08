@@ -1,3 +1,6 @@
+-- This UART supports up to 10 Mbit baud rate but it is recommended to set baud as at least 0.2 of clock frequency.
+-- Set 
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -9,11 +12,11 @@ entity Uart is
         DATA_WIDTH          : integer := 8
     );
     port (
-        clk         		: in  std_logic;
-        m_axis_tdata        : out std_logic_vector(7 downto 0);
+        clk         	    : in  std_logic;
+        m_axis_tdata        : out std_logic_vector(DATA_WIDTH-1 downto 0);
         m_axis_tready       : in  std_logic;
         m_axis_tvalid       : out std_logic;
-        s_axis_tdata        : in std_logic_vector(7 downto 0);
+        s_axis_tdata        : in std_logic_vector(DATA_WIDTH-1 downto 0);
         s_axis_tready       : out  std_logic;
         s_axis_tvalid       : in std_logic;
         rxd                 : in  std_logic;
@@ -54,7 +57,7 @@ architecture rtl of Uart is
     signal uart_tx_data_vec     : std_logic_vector(DATA_WIDTH downto 0) := (others => '0'); 
     signal uart_tx_data         : std_logic_vector((DATA_WIDTH - 1) downto 0) := (others => '0');
     signal uart_tx              : std_logic := '1';
-    signal uart_tx_ready         : std_logic := '0';
+    signal uart_tx_ready        : std_logic := '0';
     signal uart_tx_start        : std_logic := '0';
     signal uart_tx_count        : unsigned(uart_tx_count_size downto 0) := (others => '0'); 
     
@@ -72,7 +75,7 @@ architecture rtl of Uart is
         RX_GET_STOP_BIT
     );      
     signal state                : uart_rx_states := RX_IDLE;
-    signal uart_rx_data_vec     : std_logic_vector(7 downto 0) := (others => '0');
+    signal uart_rx_data_vec     : std_logic_vector(DATA_WIDTH-1 downto 0) := (others => '0');
     signal uart_rx_count        : unsigned(uart_rx_count_size downto 0) := (others => '0');
     signal rx_data_valid_buf 	: std_logic := '0';
     signal uart_rx_bit_spacing  : unsigned (rxd_filter_size - 1 downto 0) := (others => '0');
